@@ -34,7 +34,6 @@ Stack::Stack(const Stack& toCopy) {
     }
 }
 
-// Assignment operator
 Stack& Stack::operator=(const Stack& toCopy) {
     if (this == &toCopy) {
         return *this;
@@ -63,7 +62,6 @@ Stack& Stack::operator=(const Stack& toCopy) {
     return *this;
 }
 
-// Destructor
 Stack::~Stack() {
     free(items);
     items = nullptr;
@@ -102,3 +100,4 @@ int Stack::pop() {
 bool Stack::isEmpty() const {
     return top == -1;
 }
+
