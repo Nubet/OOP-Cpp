@@ -2,7 +2,6 @@
 #include <iostream>
 #include <stdexcept>
 
-// Constructor
 Stack::Stack() {
     items.reserve(MIN_CAPACITY);
 }
@@ -23,3 +22,4 @@ int Stack::pop() {
 bool Stack::isEmpty() const {
     return items.empty();
 }
+
