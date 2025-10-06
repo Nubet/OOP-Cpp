@@ -1,0 +1,11 @@
+**/third_party/
+**/not.txt
+
+**/build/
+**/Build/
+**/cmake-build-debug/
+**/cmake-build-release/
+
+**/.idea/
+
+**/*.zip
