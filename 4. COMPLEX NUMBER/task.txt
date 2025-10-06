@@ -1,0 +1,26 @@
+ 4. Complex number
+
+Write the class representing a complex number. Implement the following functionality:
+
+    read-write access to real and imaginary part (you can make the real and imaginary fields public)
+    stream insertion operator <<
+    arithmetic operators: + - * / += -= *= /=
+    comparison operators: == !=
+    functions returning amplitude and phase (you can use in your implementation functions from the C++ standard library)
+
+Carefully test the implemented functionality. Perform tests for inconstant and constant objects. Test special cases like e.g.:
+
+a += b += c
+(a += b) += c
+a *= b *= c
+(a *= b) *= c
+a + 7
+7 + a
+b * 5
+5 * b
+c == 3.5
+3.5 == c
+
+where a, b and c are complex numbers.
+Split the program into Complex.h, Complex.cpp and TestComplex.cpp files.
+Advice: do NOT change the lecture example. Read it carefully and understand, but write the class by yourself from scratch. 
