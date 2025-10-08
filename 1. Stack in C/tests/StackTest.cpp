@@ -86,3 +86,26 @@ TEST(PushBeyondCapacity, MoreThanInitialCapacity) {
     EXPECT_EQ(12, pop(&stack));
     destroy(&stack);
 }
+TEST(UnderflowDeath, PopOnEmptyExits) {
+    Stack s;
+    init(&s);
+    EXPECT_EXIT(pop(&s), ::testing::ExitedWithCode(1), ".*"); // EXPECT_EXIT checks stderr for the message output, but in my implementation the error message is printed using printf (stdout)
+}
+
+TEST(UnderflowDeath, PopAfterDestroyAlsoExits) {
+    Stack s;
+    init(&s);
+    destroy(&s);
+    EXPECT_EXIT(pop(&s), ::testing::ExitedWithCode(1), ".*");
+}
+TEST(DestroyContract, FieldsAreResetAndPointerNulled) {
+    Stack s;
+    init(&s);
+    for (int i = 0; i < 30; i++)
+        push(&s, i);
+    destroy(&s);
+
+    EXPECT_EQ(nullptr, s.items);
+    EXPECT_EQ(0, s.capacity);
+    EXPECT_EQ(-1, s.top);
+}
