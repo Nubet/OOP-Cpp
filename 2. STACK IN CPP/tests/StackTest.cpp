@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "../include/Stack.h"
 #include <climits>
+#include <stdexcept>  
 
 TEST(InitializeStack, CreatesEmptyStack) {
     Stack stack;
@@ -67,3 +68,10 @@ TEST(PushBeyondCapacity, MoreThanInitialCapacity) {
     EXPECT_EQ(13, stack.pop());
     EXPECT_EQ(12, stack.pop());
 }
+
+TEST(Exceptions, PopOnEmptyThrowsUnderflow) {
+    Stack stack;
+    EXPECT_THROW(stack.pop(), std::underflow_error);
+}
+
+
