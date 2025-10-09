@@ -1,6 +1,6 @@
 # Each Project Structure
 
-This project follows a common folder layout used across all repositories:
+All projects in this repository follow the same folder layout:
 
     src/
     include/
