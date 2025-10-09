@@ -164,3 +164,7 @@ TEST(AssignmentOperator, Chaining) {
     EXPECT_TRUE(stack2.isEmpty());
     EXPECT_TRUE(stack3.isEmpty());
 }
+TEST(Exceptions, PopOnEmptyThrowsUnderflow) {
+    Stack stack;
+    EXPECT_THROW(stack.pop(), std::underflow_error);
+}

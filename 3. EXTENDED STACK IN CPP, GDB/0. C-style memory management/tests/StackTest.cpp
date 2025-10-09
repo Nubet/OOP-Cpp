@@ -164,3 +164,9 @@ TEST(AssignmentOperator, Chaining) {
     EXPECT_TRUE(stack2.isEmpty());
     EXPECT_TRUE(stack3.isEmpty());
 }
+TEST(UnderflowDeath, PopOnEmptyExits) {
+    Stack s;
+    EXPECT_EXIT(
+        s.pop();, ::testing::ExitedWithCode(1),
+        ".*"); // EXPECT_EXIT checks stderr for the message output, but in my implementation the error message is printed using printf (stdout)
+}
