@@ -1,6 +1,6 @@
 #include "Stack.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define MIN_CAPACITY 8
 
@@ -24,7 +24,7 @@ void destroy(Stack* s) {
 }
 
 void push(Stack* s, int item) {
-    if (s->capacity - s->top - 1 <= 0){
+    if (s->capacity - s->top - 1 <= 0) {
         s->capacity *= 2;
 
         int* temp = realloc(s->items, s->capacity * sizeof(int));
@@ -51,6 +51,4 @@ int pop(Stack* s) {
     return item;
 }
 
-bool isEmpty(const Stack* s) {
-    return s->top == -1;
-}
+bool isEmpty(const Stack* s) { return s->top == -1; }

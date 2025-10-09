@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-    #include "../include/Stack.h"
-    #include <limits.h>
+#include "../include/Stack.h"
+#include <limits.h>
 }
 
 TEST(InitializeStack, CreatesEmptyStack) {
@@ -89,7 +89,9 @@ TEST(PushBeyondCapacity, MoreThanInitialCapacity) {
 TEST(UnderflowDeath, PopOnEmptyExits) {
     Stack s;
     init(&s);
-    EXPECT_EXIT(pop(&s), ::testing::ExitedWithCode(1), ".*"); // EXPECT_EXIT checks stderr for the message output, but in my implementation the error message is printed using printf (stdout)
+    EXPECT_EXIT(
+        pop(&s), ::testing::ExitedWithCode(1),
+        ".*"); // EXPECT_EXIT checks stderr for the message output, but in my implementation the error message is printed using printf (stdout)
 }
 
 TEST(UnderflowDeath, PopAfterDestroyAlsoExits) {
@@ -101,8 +103,7 @@ TEST(UnderflowDeath, PopAfterDestroyAlsoExits) {
 TEST(DestroyContract, FieldsAreResetAndPointerNulled) {
     Stack s;
     init(&s);
-    for (int i = 0; i < 30; i++)
-        push(&s, i);
+    for (int i = 0; i < 30; i++) push(&s, i);
     destroy(&s);
 
     EXPECT_EQ(nullptr, s.items);

@@ -4,7 +4,7 @@
 Stack::Stack() {
     capacity = MIN_CAPACITY;
     items = static_cast<int*>(malloc(capacity * sizeof(int)));
-    
+
     if (nullptr == items) {
         throw std::bad_alloc();
     }
@@ -40,6 +40,4 @@ int Stack::pop() {
     return item;
 }
 
-bool Stack::isEmpty() const {
-    return top == -1;
-}
+bool Stack::isEmpty() const { return top == -1; }

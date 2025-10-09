@@ -1,6 +1,7 @@
 #include <stdbool.h>
 
-typedef struct {
+typedef struct
+{
     int* items;
     int capacity;
     int top;
