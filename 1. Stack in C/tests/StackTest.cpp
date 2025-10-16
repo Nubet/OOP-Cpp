@@ -92,6 +92,7 @@ TEST(UnderflowDeath, PopOnEmptyExits) {
     EXPECT_EXIT(
         pop(&s), ::testing::ExitedWithCode(1),
         ".*"); // EXPECT_EXIT checks stderr for the message output, but in my implementation the error message is printed using printf (stdout)
+    destroy(&s);
 }
 
 TEST(UnderflowDeath, PopAfterDestroyAlsoExits) {
@@ -109,4 +110,5 @@ TEST(DestroyContract, FieldsAreResetAndPointerNulled) {
     EXPECT_EQ(nullptr, s.items);
     EXPECT_EQ(0, s.capacity);
     EXPECT_EQ(-1, s.top);
+
 }
