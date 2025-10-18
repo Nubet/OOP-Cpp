@@ -7,14 +7,5 @@ All projects in this repository follow the same folder layout:
     tests/
     third_party/
     
-Note that third_party is identical in every project! thats why i do not upload it to github
-## Setup for each project
-
-Create third_party directory on your computer by cloning GoogleTest 
-
-```bash
-git clone https://github.com/google/googletest.git third_party/googletest
-```
-
-
+Note that third_party folder is generated via Cmake
 
