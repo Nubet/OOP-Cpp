@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <ostream>
 #include <stdexcept>
+#include <sstream>
 
 Complex::Complex() {
     Real = 0.0;
