@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-#include "../include/Stack.h"
+#include "Stack.h"
 #include <climits>
+#include <gtest/gtest.h>
 
 TEST(InitializeStack, CreatesEmptyStack) {
     Stack stack;
@@ -28,7 +28,6 @@ TEST(MultiplePushAndPop, LifoOrder) {
 }
 TEST(ResizingStack, SingleResize) {
     Stack stack;
-    // default min capacity is 8
     for (int i = 0; i < 15; ++i) {
         stack.push(i);
     }
@@ -39,8 +38,7 @@ TEST(ResizingStack, SingleResize) {
 TEST(ResizingStack, ExpandsMultipleTimes) {
     Stack stack;
     const int N = 5000;
-    for (int i = 0; i < N; ++i)
-        stack.push(i);
+    for (int i = 0; i < N; ++i) stack.push(i);
 
     for (int i = N - 1; i >= 0; --i) {
         EXPECT_EQ(i, stack.pop());
