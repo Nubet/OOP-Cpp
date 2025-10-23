@@ -1,4 +1,4 @@
-#include "../include/Stack.h"
+#include "Stack.h"
 #include <cstdlib>
 #include <cstring>
 #include <algorithm>
