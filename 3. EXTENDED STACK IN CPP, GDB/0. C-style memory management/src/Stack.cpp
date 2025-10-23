@@ -1,6 +1,5 @@
-#include "../include/Stack.h"
+#include "Stack.h"
 #include <iostream>
-#include <cstdlib>
 #include <cstring>
 
 Stack::Stack() {
@@ -88,7 +87,6 @@ void Stack::push(int item) {
 int Stack::pop() {
     if (isEmpty()) {
         printf("Stack is empty \n");
-        free(items);
         exit(1);
     }
 
@@ -100,4 +98,3 @@ int Stack::pop() {
 bool Stack::isEmpty() const {
     return top == -1;
 }
-

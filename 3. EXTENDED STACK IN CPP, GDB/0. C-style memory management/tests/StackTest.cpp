@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../include/Stack.h"
+#include "Stack.h"
 #include <climits>
 
 TEST(InitializeStack, CreatesEmptyStack) {
@@ -26,23 +26,34 @@ TEST(MultiplePushAndPop, LifoOrder) {
     EXPECT_EQ(1, stack.pop());
     EXPECT_TRUE(stack.isEmpty());
 }
-
-TEST(ResizingStack, ExpandsCapacityWhenNeeded) {
+TEST(ResizingStack, SingleResize) {
     Stack stack;
-    for (int i = 0; i < 10; ++i) {
+    // default min capacity is 8
+    for (int i = 0; i < 15; ++i) {
         stack.push(i);
     }
-    EXPECT_EQ(9, stack.pop());
-    EXPECT_EQ(8, stack.pop());
-    EXPECT_EQ(7, stack.pop());
+    EXPECT_EQ(14, stack.pop());
+    EXPECT_EQ(13, stack.pop());
+    EXPECT_EQ(12, stack.pop());
 }
+TEST(ResizingStack, ExpandsMultipleTimes) {
+    Stack stack;
+    const int N = 5000;
+    for (int i = 0; i < N; ++i)
+        stack.push(i);
 
+    for (int i = N - 1; i >= 0; --i) {
+        EXPECT_EQ(i, stack.pop());
+    }
+    EXPECT_TRUE(stack.isEmpty());
+}
 TEST(StressPushPop, PushAndFullPop) {
     Stack stack;
-    for (int i = 1; i <= 10000; ++i) {
+    const int N = 10000;
+    for (int i = 1; i <= N; ++i) {
         stack.push(i);
     }
-    for (int i = 10000; i >= 1; --i) {
+    for (int i = N; i >= 1; --i) {
         EXPECT_EQ(i, stack.pop());
     }
     EXPECT_TRUE(stack.isEmpty());
@@ -56,16 +67,6 @@ TEST(PushIntLimits, HandlesMinAndMaxInt) {
     EXPECT_EQ(INT_MAX, stack.pop());
     EXPECT_EQ(INT_MIN, stack.pop());
     EXPECT_TRUE(stack.isEmpty());
-}
-
-TEST(PushBeyondCapacity, MoreThanInitialCapacity) {
-    Stack stack;
-    for (int i = 0; i < 15; ++i) {
-        stack.push(i);
-    }
-    EXPECT_EQ(14, stack.pop());
-    EXPECT_EQ(13, stack.pop());
-    EXPECT_EQ(12, stack.pop());
 }
 
 TEST(CopyConstructor, CopiesNonEmptyStack) {
@@ -151,22 +152,35 @@ TEST(AssignmentOperator, SelfAssignment) {
     EXPECT_TRUE(stack.isEmpty());
 }
 
-TEST(AssignmentOperator, Chaining) {
-    Stack stack1, stack2, stack3;
-    stack1.push(1);
-    stack2.push(2);
-    stack3.push(3);
-    stack3 = stack2 = stack1;
-    EXPECT_FALSE(stack2.isEmpty());
-    EXPECT_FALSE(stack3.isEmpty());
-    EXPECT_EQ(1, stack2.pop());
-    EXPECT_EQ(1, stack3.pop());
-    EXPECT_TRUE(stack2.isEmpty());
-    EXPECT_TRUE(stack3.isEmpty());
+TEST(AssignmentOperator, ChainingDeepCopyAndIndependence) {
+    Stack source, firstAssigned, secondAssigned;
+    source.push(1);
+    source.push(2);
+    source.push(3);
+
+    firstAssigned.push(10);
+    secondAssigned.push(20);
+
+    secondAssigned = firstAssigned = source;
+
+    EXPECT_EQ(3, firstAssigned.pop());
+    EXPECT_EQ(2, firstAssigned.pop());
+    EXPECT_EQ(1, firstAssigned.pop());
+    EXPECT_TRUE(firstAssigned.isEmpty());
+
+    EXPECT_EQ(3, secondAssigned.pop());
+    EXPECT_EQ(2, secondAssigned.pop());
+    EXPECT_EQ(1, secondAssigned.pop());
+    EXPECT_TRUE(secondAssigned.isEmpty());
+
+    EXPECT_EQ(3, source.pop());
+    EXPECT_EQ(2, source.pop());
+    EXPECT_EQ(1, source.pop());
+    EXPECT_TRUE(source.isEmpty());
 }
 TEST(UnderflowDeath, PopOnEmptyExits) {
     Stack s;
     EXPECT_EXIT(
-        s.pop();, ::testing::ExitedWithCode(1),
+        s.pop(), ::testing::ExitedWithCode(1),
         ".*"); // EXPECT_EXIT checks stderr for the message output, but in my implementation the error message is printed using printf (stdout)
 }
