@@ -77,7 +77,6 @@ private:
     QGraphicsScene *scene = nullptr;
     Player *player = nullptr;
     std::vector<Ghost *> ghosts;
-
     QTimer *gameUpdateTimer = nullptr;
     QTimer *powerTimer = nullptr;
     QGraphicsTextItem *scoreDisplay = nullptr;

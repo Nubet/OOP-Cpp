@@ -6,15 +6,15 @@
 struct Direction
 {
     int dx, dy;
-    double distance;
+    double distanceToTarget;
 };
 
 enum class GhostType
 {
-    Blinky, // czerwony - goni bezpośrednio
-    Pinky,  // różowy - celuje przed Pac-Manem
-    Inky,   // niebieski - wektor od Blinky do punktu przed Pac-Manem
-    Clyde   // pomarańczowy - jak daleko goni, jak blisko to ucieka do rogu
+    Blinky,
+    Pinky,
+    Inky,
+    Clyde
 };
 
 class Ghost : public GameItem
@@ -26,7 +26,7 @@ class Ghost : public GameItem
     int dx = 0, dy = 0;
 
     bool canMoveTo(qreal shiftX, qreal shiftY);
-    bool isAtIntersection();
+    bool isAlignedToGrid();
     std::vector<Direction> getPossibleMoves();
 
     bool isReverseOfCurrent(const Direction& direction) const;
