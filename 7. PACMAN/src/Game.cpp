@@ -12,7 +12,7 @@
 
 static qreal signOf(qreal value) { return (value > 0) ? 1 : (value < 0 ? -1 : 0); }
 
-static QPointF normalizeDirectionToAxis(QPointF directionVector) {
+static QPointF convertPixelMovementToAxisDirection(QPointF directionVector) {
     qreal absX = std::abs(directionVector.x());
     qreal absY = std::abs(directionVector.y());
 
@@ -32,7 +32,7 @@ static QPoint convertScenePositionToTileIndex(const QPointF& scenePosition) {
             static_cast<int>(std::round(scenePosition.y() / config::TileSize))};
 }
 
-static QPointF calculateTileOriginPosition(const QPoint& tileIndex) {
+static QPointF convertTileIndexToScenePosition(const QPoint& tileIndex) {
     return {static_cast<qreal>(tileIndex.x() * config::TileSize), static_cast<qreal>(tileIndex.y() * config::TileSize)};
 }
 
@@ -250,7 +250,7 @@ void Game::tryTeleport(QGraphicsItem* item) {
 
     // ← zamiast przenosić z offsetem, umieść dokładnie w środku docelowego
     // kafelka
-    const QPointF dst = onA ? calculateTileOriginPosition(bTile) : calculateTileOriginPosition(teleportEntryTile);
+    const QPointF dst = onA ? convertTileIndexToScenePosition(bTile) : convertTileIndexToScenePosition(teleportEntryTile);
     item->setPos(dst); // bez żadnego przesunięcia
     item->setData(0, 6);
     item->setData(1, item->pos());
@@ -264,7 +264,7 @@ void Game::handleTeleports() {
 QPointF Game::calculatePlayerDirection() {
     static QPointF previousPlayerPosition = player->pos();
     const QPointF currentPlayerPosition = player->pos();
-    const QPointF d = normalizeDirectionToAxis(currentPlayerPosition - previousPlayerPosition);
+    const QPointF d = convertPixelMovementToAxisDirection(currentPlayerPosition - previousPlayerPosition);
     previousPlayerPosition = currentPlayerPosition;
     return d;
 }
