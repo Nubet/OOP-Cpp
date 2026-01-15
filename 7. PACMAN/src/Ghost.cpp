@@ -50,7 +50,7 @@ bool Ghost::canMoveTo(qreal shiftX, qreal shiftY) {
     return true;
 }
 
-bool Ghost::isAtIntersection() {
+bool Ghost::isAlignedToGrid() {
     return (static_cast<int>(x()) % config::TileSize == 0) && (static_cast<int>(y()) % config::TileSize == 0);
 }
 
@@ -66,11 +66,11 @@ std::vector<Direction> Ghost::getPossibleMoves() {
     for (auto& move : moves) {
         double potentialX = x() + move.dx;
         double potentialY = y() + move.dy;
-        move.distance = std::sqrt(std::pow(potentialX - target.x(), 2) + std::pow(potentialY - target.y(), 2));
+        move.distanceToTarget = std::sqrt(std::pow(potentialX - target.x(), 2) + std::pow(potentialY - target.y(), 2));
     }
 
     std::sort(moves.begin(), moves.end(),
-              [](const Direction& a, const Direction& b) { return a.distance < b.distance; });
+              [](const Direction& a, const Direction& b) { return a.distanceToTarget < b.distanceToTarget; });
 
     return moves;
 }
@@ -182,7 +182,7 @@ void Ghost::updateAI(const QPointF& playerPos, const QPointF& playerDir, const Q
 }
 
 void Ghost::moveItem() {
-    if (isAtIntersection() || !canMoveTo(dx, dy) || (dx == 0 && dy == 0)) {
+    if (isAlignedToGrid() || !canMoveTo(dx, dy) || (dx == 0 && dy == 0)) {
         chooseBestDirection();
     }
     performMove();

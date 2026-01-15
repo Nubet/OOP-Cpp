@@ -37,8 +37,7 @@ static QPointF convertTileIndexToScenePosition(const QPoint& tileIndex) {
 }
 
 Game::Game(QWidget* parent)
-    : QGraphicsView(parent), score(0), numOfPoints(0), powerMode(false), scene(nullptr), player(nullptr),
-      scoreDisplay(nullptr), gameUpdateTimer(nullptr), powerTimer(nullptr) {
+    : QGraphicsView(parent) {
     initScene();
     initEntities();
     drawMap();
@@ -57,8 +56,12 @@ void Game::initEntities() {
     player = new Player();
 
     ghosts.clear();
-    ghosts = {new Ghost(GhostType::Blinky), new Ghost(GhostType::Pinky), new Ghost(GhostType::Inky),
-              new Ghost(GhostType::Clyde)};
+    ghosts = {
+        new Ghost(GhostType::Blinky),
+        new Ghost(GhostType::Pinky),
+        new Ghost(GhostType::Inky),
+        new Ghost(GhostType::Clyde)
+    };
 
     scene->addItem(player);
     for (auto* g : ghosts) scene->addItem(g);
@@ -155,7 +158,7 @@ Game::EntityStartPositions Game::placeMapTiles(const std::vector<std::string>& m
     teleportExit.reset();
 
     const int rows = static_cast<int>(map.size());
-    const int cols = rows ? static_cast<int>(map[0].size()) : 0;
+    const int cols = static_cast<int>(map[0].size());
     scene->setSceneRect(0, 0, cols * config::TileSize, rows * config::TileSize);
 
     for (int y = 0; y < rows; ++y) {
@@ -164,48 +167,48 @@ Game::EntityStartPositions Game::placeMapTiles(const std::vector<std::string>& m
             const int py = y * config::TileSize;
 
             switch (mapCharacterToTileType(map[y][x])) {
-            case TileType::Wall:
-                scene->addItem(new Wall(px, py));
-                break;
+                case TileType::Wall:
+                    scene->addItem(new Wall(px, py));
+                    break;
 
-            case TileType::Floor:
-                scene->addItem(new Point(px, py));
-                ++numOfPoints;
-                break;
+                case TileType::Floor:
+                    scene->addItem(new Point(px, py));
+                    ++numOfPoints;
+                    break;
 
-            case TileType::EmptyFloor:
-                break;
+                case TileType::EmptyFloor:
+                    break;
 
-            case TileType::Fruit:
-                scene->addItem(new PowerPellet(px, py));
-                break;
+                case TileType::Fruit:
+                    scene->addItem(new PowerPellet(px, py));
+                    break;
 
-            case TileType::Teleport:
-                if (!teleportEntry)
-                    teleportEntry = QPoint(px, py);
-                else if (!teleportExit)
-                    teleportExit = QPoint(px, py);
-                break;
+                case TileType::Teleport:
+                    if (!teleportEntry)
+                        teleportEntry = QPoint(px, py);
+                    else if (!teleportExit)
+                        teleportExit = QPoint(px, py);
+                    break;
 
-            case TileType::PlayerStart:
-                StartPositions.player = QPoint(px, py);
-                break;
+                case TileType::PlayerStart:
+                    StartPositions.player = QPoint(px, py);
+                    break;
 
-            case TileType::BlinkyStart:
-                StartPositions.blinky = QPoint(px, py);
-                break;
+                case TileType::BlinkyStart:
+                    StartPositions.blinky = QPoint(px, py);
+                    break;
 
-            case TileType::PinkyStart:
-                StartPositions.pinky = QPoint(px, py);
-                break;
+                case TileType::PinkyStart:
+                    StartPositions.pinky = QPoint(px, py);
+                    break;
 
-            case TileType::InkyStart:
-                StartPositions.inky = QPoint(px, py);
-                break;
+                case TileType::InkyStart:
+                    StartPositions.inky = QPoint(px, py);
+                    break;
 
-            case TileType::ClydeStart:
-                StartPositions.clyde = QPoint(px, py);
-                break;
+                case TileType::ClydeStart:
+                    StartPositions.clyde = QPoint(px, py);
+                    break;
             }
         }
     }
@@ -231,34 +234,38 @@ void Game::deactivatePowerMode() {
     for (auto* g : ghosts) g->setScared(false);
 }
 
-void Game::tryTeleport(QGraphicsItem* item) {
+void Game::teleportIfOnTeleportTile(QGraphicsItem* item) {
     if (!item || !teleportEntry || !teleportExit) return;
 
-    int cooldownTimer = item->data(0).toInt();
-    if (cooldownTimer > 0) {
-        item->setData(0, cooldownTimer - 1);
+    const int teleportCooldownTicks = 6;
+    static constexpr int teleportCooldownKey = 0;
+    static constexpr int lastPosKey = 1;
+
+    const int remainingTeleportCooldown = item->data(teleportCooldownKey).toInt();
+    if (remainingTeleportCooldown > 0) {
+        item->setData(teleportCooldownKey, remainingTeleportCooldown - 1);
         return;
     }
 
-    const QPoint currentTilePosition = convertScenePositionToTileIndex(item->pos());
-    const QPoint teleportEntryTile = convertScenePositionToTileIndex(*teleportEntry);
-    const QPoint bTile = convertScenePositionToTileIndex(*teleportExit);
+    const QPoint itemTile = convertScenePositionToTileIndex(item->pos());
+    const QPoint entryTile = convertScenePositionToTileIndex(*teleportEntry);
+    const QPoint exitTile  = convertScenePositionToTileIndex(*teleportExit);
 
-    const bool onA = (currentTilePosition == teleportEntryTile);
-    const bool onB = (currentTilePosition == bTile);
-    if (!onA && !onB) return;
+    const bool isOnEntryTile = (itemTile == entryTile);
+    const bool isOnExitTile  = (itemTile == exitTile);
+    if (!isOnEntryTile && !isOnExitTile) return;
 
-    // ← zamiast przenosić z offsetem, umieść dokładnie w środku docelowego
-    // kafelka
-    const QPointF dst = onA ? convertTileIndexToScenePosition(bTile) : convertTileIndexToScenePosition(teleportEntryTile);
-    item->setPos(dst); // bez żadnego przesunięcia
-    item->setData(0, 6);
-    item->setData(1, item->pos());
+    const QPoint destinationTile = isOnEntryTile ? exitTile : entryTile;
+    const QPointF destinationPos = convertTileIndexToScenePosition(destinationTile);
+
+    item->setPos(destinationPos);
+    item->setData(teleportCooldownKey, teleportCooldownTicks);
+    item->setData(lastPosKey, item->pos());
 }
 
 void Game::handleTeleports() {
-    tryTeleport(player);
-    for (auto* g : ghosts) tryTeleport(g);
+    teleportIfOnTeleportTile(player);
+    for (auto* g : ghosts) teleportIfOnTeleportTile(g);
 }
 
 QPointF Game::calculatePlayerDirection() {
@@ -291,9 +298,9 @@ void Game::keyPressEvent(QKeyEvent* event) {
 QPointF Game::playerDirectionVector() const { return {}; }
 
 void Game::updateGame() {
-    // zapamiętaj poprzednie pozycje na potrzeby teleportu (data(1))
-    player->setData(1, player->pos());
-    for (auto* g : ghosts) g->setData(1, g->pos());
+    static constexpr int lastPositionKey = 1;
+    player->setData(lastPositionKey, player->pos());
+    for (auto* g : ghosts) g->setData(lastPositionKey, g->pos());
 
     player->moveItem();
     handleTeleports();
@@ -304,6 +311,7 @@ void Game::updateGame() {
     checkCollisions();
 }
 
+
 void Game::updateScoreDisplay() { scoreDisplay->setPlainText("Score: " + QString::number(score)); }
 
 void Game::handleGhostCollision(Ghost* g) {
@@ -311,7 +319,7 @@ void Game::handleGhostCollision(Ghost* g) {
 
     if (!powerMode) {
         gameUpdateTimer->stop();
-        QMessageBox::information(this, "Game Over", "Game Over");
+        QMessageBox::information(this, "Game Over", "You lost :(");
         QApplication::quit();
         return;
     }
@@ -324,19 +332,19 @@ void Game::handleGhostCollision(Ghost* g) {
     const int maxTileY = static_cast<int>(scene->sceneRect().height()) - config::TileSize * 2;
 
     switch (g->ghostType()) {
-    case GhostType::Blinky:
-        g->setPos(min, min);
-        break;
-    case GhostType::Pinky:
-        g->setPos(maxTileX, min);
-        break;
-    case GhostType::Inky:
-        g->setPos(maxTileX, maxTileY);
-        break;
-    case GhostType::Clyde:
-        g->setPos(min, maxTileY);
-        break;
-    }
+        case GhostType::Blinky:
+            g->setPos(min, min);
+            break;
+        case GhostType::Pinky:
+            g->setPos(maxTileX, min);
+            break;
+        case GhostType::Inky:
+            g->setPos(maxTileX, maxTileY);
+            break;
+        case GhostType::Clyde:
+            g->setPos(min, maxTileY);
+            break;
+        }
 }
 
 void Game::handleItemCollisions() {
