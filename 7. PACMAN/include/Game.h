@@ -1,9 +1,7 @@
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
 #include <QGraphicsView>
 #include <QPoint>
-#include <QPointF>
 #include <optional>
 #include <string>
 #include <vector>
@@ -64,7 +62,7 @@ private:
     void drawMap();
 
     void handleTeleports();
-    void tryTeleport(QGraphicsItem *item);
+    void teleportIfOnTeleportTile(QGraphicsItem *item);
 
     QPointF calculatePlayerDirection();
     QPointF playerDirectionVector() const;
@@ -91,5 +89,3 @@ private:
     std::optional<QPoint> teleportEntry;
     std::optional<QPoint> teleportExit;
 };
-
-#endif

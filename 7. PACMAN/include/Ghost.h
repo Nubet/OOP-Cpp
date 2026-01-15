@@ -1,5 +1,4 @@
-#ifndef GHOST_H
-#define GHOST_H
+#pragma once
 
 #include "Items.h"
 #include <vector>
@@ -53,5 +52,3 @@ class Ghost : public GameItem
 
     void moveItem() override;
 };
-
-#endif

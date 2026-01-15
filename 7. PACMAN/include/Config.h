@@ -1,7 +1,4 @@
-#ifndef CONFIG_H
-#define CONFIG_H
-
-#include <QColor>
+#pragma once
 
 namespace config
 {
@@ -47,6 +44,5 @@ namespace config
     inline constexpr int PinkyLookAheadTiles = 4;
     inline constexpr int InkyLookAheadTiles = 2;
     inline constexpr int ClydeChaseDistanceTiles = 6;
-} // namespace config
+}
 
-#endif

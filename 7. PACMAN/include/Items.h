@@ -1,5 +1,4 @@
-#ifndef ITEMS_H
-#define ITEMS_H
+#pragma once
 
 #include <QGraphicsRectItem>
 #include <QGraphicsEllipseItem>
@@ -39,5 +38,3 @@ public:
     void setDirection(int keyPress);
     void moveItem() override;
 };
-
-#endif
