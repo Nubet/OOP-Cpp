@@ -18,8 +18,8 @@ namespace config
     inline constexpr int ViewHeight = SceneHeight + ViewPadding;
 
     inline constexpr int ScoreFontSize = 20;
-    inline constexpr int ScorePosX = 10;
-    inline constexpr int ScorePosY = 0;
+    inline constexpr int ScorePosX = 500;
+    inline constexpr int ScorePosY = 560;
 
     inline constexpr int PlayerRectInset = 2;
     inline constexpr int PlayerRectSize = 36;
