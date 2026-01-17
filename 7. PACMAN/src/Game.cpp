@@ -49,8 +49,18 @@ void Game::initScene() {
     scene = new QGraphicsScene(0, 0, config::SceneWidth, config::SceneHeight);
     scene->setBackgroundBrush(Qt::black);
     setScene(scene);
-    setFixedSize(config::ViewWidth, config::ViewHeight);
+
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    setTransform(QTransform::fromScale(config::ViewScale, config::ViewScale));
+
+    setFixedSize(
+        static_cast<int>(std::ceil(config::ViewWidth  * config::ViewScale)),
+        static_cast<int>(std::ceil(config::ViewHeight * config::ViewScale))
+    );
 }
+
 
 void Game::initEntities() {
     player = new Player();
