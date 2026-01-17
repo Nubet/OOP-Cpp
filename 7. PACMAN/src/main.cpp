@@ -4,7 +4,6 @@
 #include <ctime>
 
 int main(int argc, char* argv[]) {
-    qputenv("QT_SCALE_FACTOR", QByteArray::number(config::ViewScale));
     srand(static_cast<unsigned>(time(0)));
     QApplication application(argc, argv);
     Game gameWindow;
